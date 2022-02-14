@@ -135,7 +135,7 @@ export default {
 			const parentElement = this.$refs.pdfContent.firstChild
 			const pageBreaks = parentElement.getElementsByClassName('html2pdf__page-break')
 			const pageBreakLength = pageBreaks.length - 1
-			
+
 			if (pageBreakLength === -1) return
 
 			this.hasAlreadyParsed = false
@@ -156,7 +156,7 @@ export default {
 			this.progress = 25
 
 			/*
-				When this props is true, 
+				When this props is true,
 				the props paginate-elements-by-height will not be used.
 				Instead the pagination process will rely on the elements with a class "html2pdf__page-break"
 				to know where to page break, which is automatically done by html2pdf.js
@@ -234,6 +234,12 @@ export default {
 			const html2PdfSetup = html2pdf().set(options).from(pdfContent)
 			let pdfBlobUrl = null
 
+      if (this.filename) {
+        html2PdfSetup.setProperties({
+          title: `${this.filename}.pdf`,
+        });
+      }
+
 			if (this.previewModal) {
 				this.pdfFile = await html2PdfSetup.output('bloburl')
 				pdfBlobUrl = this.pdfFile
@@ -263,7 +269,7 @@ export default {
 				filename: `${this.filename}.pdf`,
 
 				image: {
-					type: 'jpeg', 
+					type: 'jpeg',
 					quality: 0.98
 				},
 

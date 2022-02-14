@@ -1,5 +1,5 @@
 {
-  "name": "vue-html2pdf",
+  "name": "vue-html2pdf-fixed",
   "version": "1.8.0",
   "description": "",
   "main": "dist/vue-html2pdf.ssr.js",

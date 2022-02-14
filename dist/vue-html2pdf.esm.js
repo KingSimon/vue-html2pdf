@@ -103,7 +103,7 @@ var script = {
 			var parentElement = this.$refs.pdfContent.firstChild;
 			var pageBreaks = parentElement.getElementsByClassName('html2pdf__page-break');
 			var pageBreakLength = pageBreaks.length - 1;
-			
+
 			if (pageBreakLength === -1) { return }
 
 			this.hasAlreadyParsed = false;
@@ -124,7 +124,7 @@ var script = {
 			this.progress = 25;
 
 			/*
-				When this props is true, 
+				When this props is true,
 				the props paginate-elements-by-height will not be used.
 				Instead the pagination process will rely on the elements with a class "html2pdf__page-break"
 				to know where to page break, which is automatically done by html2pdf.js
@@ -202,6 +202,12 @@ var script = {
 			var html2PdfSetup = html2pdf().set(options).from(pdfContent);
 			var pdfBlobUrl = null;
 
+      if (this.filename) {
+        html2PdfSetup.setProperties({
+          title: ((this.filename) + ".pdf"),
+        });
+      }
+
 			if (this.previewModal) {
 				this.pdfFile = await html2PdfSetup.output('bloburl');
 				pdfBlobUrl = this.pdfFile;
@@ -231,7 +237,7 @@ var script = {
 				filename: ((this.filename) + ".pdf"),
 
 				image: {
-					type: 'jpeg', 
+					type: 'jpeg',
 					quality: 0.98
 				},
 
@@ -397,11 +403,11 @@ var __vue_staticRenderFns__ = [];
   /* style */
   var __vue_inject_styles__ = function (inject) {
     if (!inject) { return }
-    inject("data-v-1fd3ad26_0", { source: ".vue-html2pdf .layout-container[data-v-1fd3ad26]{position:fixed;width:100vw;height:100vh;left:-100vw;top:0;z-index:-9999;background:rgba(95,95,95,.8);display:flex;justify-content:center;align-items:flex-start;overflow:auto}.vue-html2pdf .layout-container.show-layout[data-v-1fd3ad26]{left:0;z-index:9999}.vue-html2pdf .layout-container.unset-all[data-v-1fd3ad26]{all:unset;width:auto;height:auto}.vue-html2pdf .pdf-preview[data-v-1fd3ad26]{position:fixed;width:65%;min-width:600px;height:80vh;top:100px;z-index:9999999;left:50%;transform:translateX(-50%);border-radius:5px;box-shadow:0 0 10px #00000048}.vue-html2pdf .pdf-preview button[data-v-1fd3ad26]{position:absolute;top:-20px;left:-15px;width:35px;height:35px;background:#555;border:0;box-shadow:0 0 10px #00000048;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}.vue-html2pdf .pdf-preview iframe[data-v-1fd3ad26]{border:0}.vue-html2pdf .transition-anim-enter-active[data-v-1fd3ad26],.vue-html2pdf .transition-anim-leave-active[data-v-1fd3ad26]{transition:opacity .3s ease-in}.vue-html2pdf .transition-anim-enter[data-v-1fd3ad26],.vue-html2pdf .transition-anim-leave-to[data-v-1fd3ad26]{opacity:0}", map: undefined, media: undefined });
+    inject("data-v-6ef3a8bf_0", { source: ".vue-html2pdf .layout-container[data-v-6ef3a8bf]{position:fixed;width:100vw;height:100vh;left:-100vw;top:0;z-index:-9999;background:rgba(95,95,95,.8);display:flex;justify-content:center;align-items:flex-start;overflow:auto}.vue-html2pdf .layout-container.show-layout[data-v-6ef3a8bf]{left:0;z-index:9999}.vue-html2pdf .layout-container.unset-all[data-v-6ef3a8bf]{all:unset;width:auto;height:auto}.vue-html2pdf .pdf-preview[data-v-6ef3a8bf]{position:fixed;width:65%;min-width:600px;height:80vh;top:100px;z-index:9999999;left:50%;transform:translateX(-50%);border-radius:5px;box-shadow:0 0 10px #00000048}.vue-html2pdf .pdf-preview button[data-v-6ef3a8bf]{position:absolute;top:-20px;left:-15px;width:35px;height:35px;background:#555;border:0;box-shadow:0 0 10px #00000048;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}.vue-html2pdf .pdf-preview iframe[data-v-6ef3a8bf]{border:0}.vue-html2pdf .transition-anim-enter-active[data-v-6ef3a8bf],.vue-html2pdf .transition-anim-leave-active[data-v-6ef3a8bf]{transition:opacity .3s ease-in}.vue-html2pdf .transition-anim-enter[data-v-6ef3a8bf],.vue-html2pdf .transition-anim-leave-to[data-v-6ef3a8bf]{opacity:0}", map: undefined, media: undefined });
 
   };
   /* scoped */
-  var __vue_scope_id__ = "data-v-1fd3ad26";
+  var __vue_scope_id__ = "data-v-6ef3a8bf";
   /* module identifier */
   var __vue_module_identifier__ = undefined;
   /* functional template */
