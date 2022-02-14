@@ -234,14 +234,15 @@ export default {
 			const html2PdfSetup = html2pdf().set(options).from(pdfContent)
 			let pdfBlobUrl = null
 
-      if (this.filename) {
-        html2PdfSetup.setProperties({
-          title: `${this.filename}.pdf`,
-        });
-      }
-
 			if (this.previewModal) {
 				this.pdfFile = await html2PdfSetup.output('bloburl')
+
+        if (this.filename) {
+          this.pdfFile.setProperties({
+            title: `${this.filename}.pdf`,
+          });
+        }
+
 				pdfBlobUrl = this.pdfFile
 			}
 
