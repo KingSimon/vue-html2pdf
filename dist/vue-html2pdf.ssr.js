@@ -1,264 +1,273 @@
 'use strict';Object.defineProperty(exports,'__esModule',{value:true});function _interopDefault(e){return(e&&(typeof e==='object')&&'default'in e)?e['default']:e}var html2pdf=_interopDefault(require('html2pdf.js'));//
 
 var script = {
-	props: {
-		showLayout: {
-			type: Boolean,
-			default: false
-		},
+  props: {
+    showLayout: {
+      type: Boolean,
+      default: false
+    },
 
-		floatLayout: {
-			type: Boolean,
-			default: true
-		},
+    floatLayout: {
+      type: Boolean,
+      default: true
+    },
 
-		enableDownload: {
-			type: Boolean,
-			default: true
-		},
+    enableDownload: {
+      type: Boolean,
+      default: true
+    },
 
-		previewModal: {
-			type: Boolean,
-			default: false
-		},
+    previewModal: {
+      type: Boolean,
+      default: false
+    },
 
-		paginateElementsByHeight: {
-			type: Number
-		},
+    paginateElementsByHeight: {
+      type: Number
+    },
 
-		filename: {
-			type: String,
-			default: ("" + (new Date().getTime()))
-		},
+    filename: {
+      type: String,
+      default: ("" + (new Date().getTime()))
+    },
 
-		pdfQuality: {
-			type: Number,
-			default: 2,
-		},
+    pdfQuality: {
+      type: Number,
+      default: 2,
+    },
 
-		pdfFormat: {
-			default: 'a4',
-		},
+    pdfFormat: {
+      default: 'a4',
+    },
 
-		pdfOrientation: {
-			type: String,
-			default: 'portrait'
-		},
+    pdfOrientation: {
+      type: String,
+      default: 'portrait'
+    },
 
-		pdfContentWidth: {
-			default: '800px'
-		},
+    pdfContentWidth: {
+      default: '800px'
+    },
 
-		htmlToPdfOptions: {
-			type: Object
-		},
+    htmlToPdfOptions: {
+      type: Object
+    },
 
-		manualPagination: {
-			type: Boolean,
-			default: false
-		}
-	},
+    manualPagination: {
+      type: Boolean,
+      default: false
+    }
+  },
 
-	data: function data () {
-		return {
-			hasAlreadyParsed: false,
-			progress: 0,
-			pdfWindow: null,
-			pdfFile: null
-		}
-	},
+  data: function data() {
+    return {
+      hasAlreadyParsed: false,
+      progress: 0,
+      pdfWindow: null,
+      pdfFile: null
+    }
+  },
 
-	watch: {
-		progress: function progress (val) {
-			this.$emit('progress', val);
-		},
+  watch: {
+    progress: function progress(val) {
+      this.$emit('progress', val);
+    },
 
-		paginateElementsByHeight: function paginateElementsByHeight () {
-			this.resetPagination();
-		},
+    paginateElementsByHeight: function paginateElementsByHeight() {
+      this.resetPagination();
+    },
 
-		$props: {
-			handler: function handler () {
-				this.validateProps();
-			},
+    $props: {
+      handler: function handler() {
+        this.validateProps();
+      },
 
-			deep: true,
-			immediate: true
-		}
-	},
+      deep: true,
+      immediate: true
+    }
+  },
 
-	methods: {
-		validateProps: function validateProps () {
-			// If manual-pagination is false, paginate-elements-by-height props is required
-			if (!this.manualPagination) {
-				if (this.paginateElementsByHeight === undefined) {
-					console.error('Error: paginate-elements-by-height is required if manual-pagination is false');
-				}
-			}
-		},
+  methods: {
+    validateProps: function validateProps() {
+      // If manual-pagination is false, paginate-elements-by-height props is required
+      if (!this.manualPagination) {
+        if (this.paginateElementsByHeight === undefined) {
+          console.error('Error: paginate-elements-by-height is required if manual-pagination is false');
+        }
+      }
+    },
 
-		resetPagination: function resetPagination () {
-			var parentElement = this.$refs.pdfContent.firstChild;
-			var pageBreaks = parentElement.getElementsByClassName('html2pdf__page-break');
-			var pageBreakLength = pageBreaks.length - 1;
+    resetPagination: function resetPagination() {
+      var parentElement = this.$refs.pdfContent.firstChild;
+      var pageBreaks = parentElement.getElementsByClassName('html2pdf__page-break');
+      var pageBreakLength = pageBreaks.length - 1;
 
-			if (pageBreakLength === -1) { return }
+      if (pageBreakLength === -1) { return }
 
-			this.hasAlreadyParsed = false;
+      this.hasAlreadyParsed = false;
 
-			// Remove All Page Break (For Pagination)
-			for (var x = pageBreakLength; x >= 0; x--) {
-				pageBreaks[x].parentNode.removeChild(pageBreaks[x]);
-			}
-		},
+      // Remove All Page Break (For Pagination)
+      for (var x = pageBreakLength; x >= 0; x--) {
+        pageBreaks[x].parentNode.removeChild(pageBreaks[x]);
+      }
+    },
 
-		generatePdf: function generatePdf () {
-			this.$emit('startPagination');
-			this.progress = 0;
-			this.paginationOfElements();
-		},
+    generatePdf: function generatePdf() {
+      this.$emit('startPagination');
+      this.progress = 0;
+      this.paginationOfElements();
+    },
 
-		paginationOfElements: function paginationOfElements () {
-			this.progress = 25;
+    paginationOfElements: function paginationOfElements() {
+      this.progress = 25;
 
-			/*
-				When this props is true,
-				the props paginate-elements-by-height will not be used.
-				Instead the pagination process will rely on the elements with a class "html2pdf__page-break"
-				to know where to page break, which is automatically done by html2pdf.js
-			*/
-			if (this.manualPagination) {
-				this.progress = 70;
-				this.$emit('hasPaginated');
-				this.downloadPdf();
-				return
-			}
+      /*
+        When this props is true,
+        the props paginate-elements-by-height will not be used.
+        Instead the pagination process will rely on the elements with a class "html2pdf__page-break"
+        to know where to page break, which is automatically done by html2pdf.js
+      */
+      if (this.manualPagination) {
+        this.progress = 70;
+        this.$emit('hasPaginated');
+        this.downloadPdf();
+        return
+      }
 
-			if (!this.hasAlreadyParsed) {
-				var parentElement = this.$refs.pdfContent.firstChild;
-				var ArrOfContentChildren = Array.from(parentElement.children);
-				var childrenHeight = 0;
+      if (!this.hasAlreadyParsed) {
+        var parentElement = this.$refs.pdfContent.firstChild;
+        var ArrOfContentChildren = Array.from(parentElement.children);
+        var childrenHeight = 0;
 
-				/*
-					Loop through Elements and add there height with childrenHeight variable.
-					Once the childrenHeight is >= this.paginateElementsByHeight, create a div with
-					a class named 'html2pdf__page-break' and insert the element before the element
-					that will be in the next page
-				*/
-				for (var childElement of ArrOfContentChildren) {
-					// Get The First Class of the element
-					var elementFirstClass = childElement.classList[0];
-					var isPageBreakClass = elementFirstClass === 'html2pdf__page-break';
-					if (isPageBreakClass) {
-						childrenHeight = 0;
-					} else {
-						// Get Element Height
-						var elementHeight = childElement.clientHeight;
+        /*
+          Loop through Elements and add there height with childrenHeight variable.
+          Once the childrenHeight is >= this.paginateElementsByHeight, create a div with
+          a class named 'html2pdf__page-break' and insert the element before the element
+          that will be in the next page
+        */
+        for (var childElement of ArrOfContentChildren) {
+          // Get The First Class of the element
+          var elementFirstClass = childElement.classList[0];
+          var isPageBreakClass = elementFirstClass === 'html2pdf__page-break';
+          if (isPageBreakClass) {
+            childrenHeight = 0;
+          } else {
+            // Get Element Height
+            var elementHeight = childElement.clientHeight;
 
-						// Get Computed Margin Top and Bottom
-						var elementComputedStyle = childElement.currentStyle || window.getComputedStyle(childElement);
-						var elementMarginTopBottom = parseInt(elementComputedStyle.marginTop) + parseInt(elementComputedStyle.marginBottom);
+            // Get Computed Margin Top and Bottom
+            var elementComputedStyle = childElement.currentStyle || window.getComputedStyle(childElement);
+            var elementMarginTopBottom = parseInt(elementComputedStyle.marginTop) + parseInt(elementComputedStyle.marginBottom);
 
-						// Add Both Element Height with the Elements Margin Top and Bottom
-						var elementHeightWithMargin = elementHeight + elementMarginTopBottom;
+            // Add Both Element Height with the Elements Margin Top and Bottom
+            var elementHeightWithMargin = elementHeight + elementMarginTopBottom;
 
-						if ((childrenHeight + elementHeight) < this.paginateElementsByHeight) {
-							childrenHeight += elementHeightWithMargin;
-						} else {
-							var section = document.createElement('div');
-							section.classList.add('html2pdf__page-break');
-							parentElement.insertBefore(section, childElement);
+            if ((childrenHeight + elementHeight) < this.paginateElementsByHeight) {
+              childrenHeight += elementHeightWithMargin;
+            } else {
+              var section = document.createElement('div');
+              section.classList.add('html2pdf__page-break');
+              parentElement.insertBefore(section, childElement);
 
-							// Reset Variables made the upper condition false
-							childrenHeight = elementHeightWithMargin;
-						}
-					}
-				}
+              // Reset Variables made the upper condition false
+              childrenHeight = elementHeightWithMargin;
+            }
+          }
+        }
 
-				this.progress = 70;
+        this.progress = 70;
 
-				/*
-					Set to true so that if would generate again we wouldn't need
-					to parse the HTML to paginate the elements
-				*/
-				this.hasAlreadyParsed = true;
-			} else {
-				this.progress = 70;
-			}
+        /*
+          Set to true so that if would generate again we wouldn't need
+          to parse the HTML to paginate the elements
+        */
+        this.hasAlreadyParsed = true;
+      } else {
+        this.progress = 70;
+      }
 
-			this.$emit('hasPaginated');
-			this.downloadPdf();
-		},
+      this.$emit('hasPaginated');
+      this.downloadPdf();
+    },
 
-		downloadPdf: async function downloadPdf () {
-			// Set Element and Html2pdf.js Options
-			var pdfContent = this.$refs.pdfContent;
-			var options = this.setOptions();
+    downloadPdf: async function downloadPdf() {
+      // Set Element and Html2pdf.js Options
+      var pdfContent = this.$refs.pdfContent;
+      var options = this.setOptions();
 
-			this.$emit('beforeDownload', { html2pdf: html2pdf, options: options, pdfContent: pdfContent });
+      this.$emit('beforeDownload', {html2pdf: html2pdf, options: options, pdfContent: pdfContent});
 
-			var html2PdfSetup = html2pdf().set(options).from(pdfContent);
-			var pdfBlobUrl = null;
+      var html2PdfSetup = html2pdf().set(options).from(pdfContent);
+      var pdfBlobUrl = null;
 
-			if (this.previewModal) {
-				this.pdfFile = await html2PdfSetup.output('bloburl');
-
+      if (this.previewModal) {
+        var filePDF = await html2PdfSetup.toPdf().get('pdf');
         if (this.filename) {
-          this.pdfFile.setProperties({
+          filePDF.setProperties({
             title: ((this.filename) + ".pdf"),
           });
         }
+        this.pdfFile = filePDF.output('datauristring');
+        pdfBlobUrl = filePDF.output('bloburl');
+      }
 
-				pdfBlobUrl = this.pdfFile;
-			}
+      if (this.enableDownload) {
+        var filePDF$1 = await html2PdfSetup.toPdf().get('pdf');
+        if (this.filename) {
+          filePDF$1.setProperties({
+            title: ((this.filename) + ".pdf"),
+            // subject: `${this.filename}`,
+            // author: 'owlee',
+            // keywords: 'pdf',
+            // creator: 'owlee'
+          });
+        }
+        pdfBlobUrl = filePDF$1.save().output('bloburl');
+      }
 
-			if (this.enableDownload) {
-				pdfBlobUrl = await html2PdfSetup.save().output('bloburl');
-			}
+      if (pdfBlobUrl) {
+        var res = await fetch(pdfBlobUrl);
+        var blobFile = await res.blob();
+        this.$emit('hasDownloaded', blobFile);
+      }
 
-			if (pdfBlobUrl) {
-				var res = await fetch(pdfBlobUrl);
-				var blobFile = await res.blob();
-				this.$emit('hasDownloaded', blobFile);
-			}
+      this.progress = 100;
+    },
 
-			this.progress = 100;
-		},
+    setOptions: function setOptions() {
+      if (this.htmlToPdfOptions !== undefined && this.htmlToPdfOptions !== null) {
+        return this.htmlToPdfOptions
+      }
 
-		setOptions: function setOptions () {
-			if (this.htmlToPdfOptions !== undefined && this.htmlToPdfOptions !== null) {
-				return this.htmlToPdfOptions
-			}
+      return {
+        margin: 0,
 
-			return {
-				margin: 0,
+        filename: ((this.filename) + ".pdf"),
 
-				filename: ((this.filename) + ".pdf"),
+        image: {
+          type: 'jpeg',
+          quality: 0.98
+        },
 
-				image: {
-					type: 'jpeg',
-					quality: 0.98
-				},
+        enableLinks: false,
 
-				enableLinks: false,
+        html2canvas: {
+          scale: this.pdfQuality,
+          useCORS: true
+        },
 
-				html2canvas: {
-					scale: this.pdfQuality,
-					useCORS: true
-				},
+        jsPDF: {
+          unit: 'in',
+          format: this.pdfFormat,
+          orientation: this.pdfOrientation
+        }
+      }
+    },
 
-				jsPDF: {
-					unit: 'in',
-					format: this.pdfFormat,
-					orientation: this.pdfOrientation
-				}
-			}
-		},
-
-		closePreview: function closePreview () {
-			this.pdfFile = null;
-		}
-	}
+    closePreview: function closePreview() {
+      this.pdfFile = null;
+    }
+  }
 };function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
     if (typeof shadowMode !== 'boolean') {
         createInjectorSSR = createInjector;
@@ -379,19 +388,19 @@ var __vue_script__ = script;
 var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"vue-html2pdf"},[_vm._ssrNode("<section"+(_vm._ssrClass("layout-container",{
 				'show-layout' : _vm.showLayout,
 				'unset-all' : !_vm.floatLayout
-			}))+">","</section>",[_vm._ssrNode("<section class=\"content-wrapper\""+(_vm._ssrStyle(null,("width: " + _vm.pdfContentWidth + ";"), null))+">","</section>",[_vm._t("pdf-content")],2)]),_vm._ssrNode(" "),_c('transition',{attrs:{"name":"transition-anim"}},[(_vm.pdfFile)?_c('section',{staticClass:"pdf-preview"},[_c('button',{on:{"click":function($event){if($event.target !== $event.currentTarget){ return null; }return _vm.closePreview()}}},[_vm._v("\n\t\t\t\t\t×\n\t\t\t\t")]),_vm._v(" "),_c('iframe',{attrs:{"src":_vm.pdfFile,"width":"100%","height":"100%"}})]):_vm._e()])],2)};
+			}))+">","</section>",[_vm._ssrNode("<section class=\"content-wrapper\""+(_vm._ssrStyle(null,("width: " + _vm.pdfContentWidth + ";"), null))+">","</section>",[_vm._t("pdf-content")],2)]),_vm._ssrNode(" "),_c('transition',{attrs:{"name":"transition-anim"}},[(_vm.pdfFile)?_c('section',{staticClass:"pdf-preview"},[_c('button',{on:{"click":function($event){if($event.target !== $event.currentTarget){ return null; }return _vm.closePreview()}}},[_vm._v("\n          ×\n        ")]),_vm._v(" "),_c('iframe',{attrs:{"src":_vm.pdfFile,"width":"100%","height":"100%"}})]):_vm._e()])],2)};
 var __vue_staticRenderFns__ = [];
 
   /* style */
   var __vue_inject_styles__ = function (inject) {
     if (!inject) { return }
-    inject("data-v-1ab5c1a4_0", { source: ".vue-html2pdf .layout-container[data-v-1ab5c1a4]{position:fixed;width:100vw;height:100vh;left:-100vw;top:0;z-index:-9999;background:rgba(95,95,95,.8);display:flex;justify-content:center;align-items:flex-start;overflow:auto}.vue-html2pdf .layout-container.show-layout[data-v-1ab5c1a4]{left:0;z-index:9999}.vue-html2pdf .layout-container.unset-all[data-v-1ab5c1a4]{all:unset;width:auto;height:auto}.vue-html2pdf .pdf-preview[data-v-1ab5c1a4]{position:fixed;width:65%;min-width:600px;height:80vh;top:100px;z-index:9999999;left:50%;transform:translateX(-50%);border-radius:5px;box-shadow:0 0 10px #00000048}.vue-html2pdf .pdf-preview button[data-v-1ab5c1a4]{position:absolute;top:-20px;left:-15px;width:35px;height:35px;background:#555;border:0;box-shadow:0 0 10px #00000048;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}.vue-html2pdf .pdf-preview iframe[data-v-1ab5c1a4]{border:0}.vue-html2pdf .transition-anim-enter-active[data-v-1ab5c1a4],.vue-html2pdf .transition-anim-leave-active[data-v-1ab5c1a4]{transition:opacity .3s ease-in}.vue-html2pdf .transition-anim-enter[data-v-1ab5c1a4],.vue-html2pdf .transition-anim-leave-to[data-v-1ab5c1a4]{opacity:0}", map: undefined, media: undefined });
+    inject("data-v-fc45c408_0", { source: ".vue-html2pdf .layout-container[data-v-fc45c408]{position:fixed;width:100vw;height:100vh;left:-100vw;top:0;z-index:-9999;background:rgba(95,95,95,.8);display:flex;justify-content:center;align-items:flex-start;overflow:auto}.vue-html2pdf .layout-container.show-layout[data-v-fc45c408]{left:0;z-index:9999}.vue-html2pdf .layout-container.unset-all[data-v-fc45c408]{all:unset;width:auto;height:auto}.vue-html2pdf .pdf-preview[data-v-fc45c408]{position:fixed;width:65%;min-width:600px;height:80vh;top:100px;z-index:9999999;left:50%;transform:translateX(-50%);border-radius:5px;box-shadow:0 0 10px #00000048}.vue-html2pdf .pdf-preview button[data-v-fc45c408]{position:absolute;top:-20px;left:-15px;width:35px;height:35px;background:#555;border:0;box-shadow:0 0 10px #00000048;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}.vue-html2pdf .pdf-preview iframe[data-v-fc45c408]{border:0}.vue-html2pdf .transition-anim-enter-active[data-v-fc45c408],.vue-html2pdf .transition-anim-leave-active[data-v-fc45c408]{transition:opacity .3s ease-in}.vue-html2pdf .transition-anim-enter[data-v-fc45c408],.vue-html2pdf .transition-anim-leave-to[data-v-fc45c408]{opacity:0}", map: undefined, media: undefined });
 
   };
   /* scoped */
-  var __vue_scope_id__ = "data-v-1ab5c1a4";
+  var __vue_scope_id__ = "data-v-fc45c408";
   /* module identifier */
-  var __vue_module_identifier__ = "data-v-1ab5c1a4";
+  var __vue_module_identifier__ = "data-v-fc45c408";
   /* functional template */
   var __vue_is_functional_template__ = false;
   /* style inject shadow dom */
