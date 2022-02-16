@@ -191,7 +191,23 @@ var script = {
       this.$emit('hasPaginated');
       this.downloadPdf();
     },
-
+    savePdf: async function savePdf(event) {
+      event.stopPropagation();
+      var pdfContent = this.$refs.pdfContent;
+      var options = this.setOptions();
+      var html2PdfSetup = html2pdf().set(options).from(pdfContent);
+      var filePDF = await html2PdfSetup.toPdf().get('pdf');
+      if (this.filename) {
+        filePDF.setProperties({
+          title: ((this.filename) + ".pdf"),
+          // subject: `${this.filename}`,
+          // author: 'owlee',
+          // keywords: 'pdf',
+          // creator: 'owlee'
+        });
+      }
+      filePDF.save(((this.filename) + ".pdf"));
+    },
     downloadPdf: async function downloadPdf() {
       // Set Element and Html2pdf.js Options
       var pdfContent = this.$refs.pdfContent;
@@ -407,17 +423,17 @@ var __vue_script__ = script;
 var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"vue-html2pdf"},[_c('section',{staticClass:"layout-container",class:{
 				'show-layout' : _vm.showLayout,
 				'unset-all' : !_vm.floatLayout
-			}},[_c('section',{ref:"pdfContent",staticClass:"content-wrapper",style:(("width: " + _vm.pdfContentWidth + ";"))},[_vm._t("pdf-content")],2)]),_vm._v(" "),_c('transition',{attrs:{"name":"transition-anim"}},[(_vm.pdfFile)?_c('section',{staticClass:"pdf-preview"},[_c('button',{on:{"click":function($event){if($event.target !== $event.currentTarget){ return null; }return _vm.closePreview()}}},[_vm._v("\n          ×\n        ")]),_vm._v(" "),_c('iframe',{attrs:{"src":_vm.pdfFile,"width":"100%","height":"100%"}})]):_vm._e()])],1)};
+			}},[_c('section',{ref:"pdfContent",staticClass:"content-wrapper",style:(("width: " + _vm.pdfContentWidth + ";"))},[_vm._t("pdf-content")],2)]),_vm._v(" "),_c('transition',{attrs:{"name":"transition-anim"}},[(_vm.pdfFile)?_c('section',{staticClass:"pdf-preview"},[_c('button',{on:{"click":function($event){if($event.target !== $event.currentTarget){ return null; }return _vm.closePreview()}}},[_vm._v("\n          ×\n        ")]),_vm._v(" "),_c('div',{staticClass:"download-pdf",on:{"click":_vm.savePdf}},[_c('div',{staticClass:"inner"})]),_vm._v(" "),_c('iframe',{attrs:{"src":_vm.pdfFile,"width":"100%","height":"100%"}})]):_vm._e()])],1)};
 var __vue_staticRenderFns__ = [];
 
   /* style */
   var __vue_inject_styles__ = function (inject) {
     if (!inject) { return }
-    inject("data-v-fc45c408_0", { source: ".vue-html2pdf .layout-container[data-v-fc45c408]{position:fixed;width:100vw;height:100vh;left:-100vw;top:0;z-index:-9999;background:rgba(95,95,95,.8);display:flex;justify-content:center;align-items:flex-start;overflow:auto}.vue-html2pdf .layout-container.show-layout[data-v-fc45c408]{left:0;z-index:9999}.vue-html2pdf .layout-container.unset-all[data-v-fc45c408]{all:unset;width:auto;height:auto}.vue-html2pdf .pdf-preview[data-v-fc45c408]{position:fixed;width:65%;min-width:600px;height:80vh;top:100px;z-index:9999999;left:50%;transform:translateX(-50%);border-radius:5px;box-shadow:0 0 10px #00000048}.vue-html2pdf .pdf-preview button[data-v-fc45c408]{position:absolute;top:-20px;left:-15px;width:35px;height:35px;background:#555;border:0;box-shadow:0 0 10px #00000048;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}.vue-html2pdf .pdf-preview iframe[data-v-fc45c408]{border:0}.vue-html2pdf .transition-anim-enter-active[data-v-fc45c408],.vue-html2pdf .transition-anim-leave-active[data-v-fc45c408]{transition:opacity .3s ease-in}.vue-html2pdf .transition-anim-enter[data-v-fc45c408],.vue-html2pdf .transition-anim-leave-to[data-v-fc45c408]{opacity:0}", map: undefined, media: undefined });
+    inject("data-v-3ba36c9f_0", { source: ".download-pdf[data-v-3ba36c9f]{cursor:pointer;position:absolute;top:8px;right:92px;width:40px;height:40px}.download-pdf .inner[data-v-3ba36c9f]{margin-top:2px;margin-left:2px;width:36px;height:36px;border-radius:50%}.download-pdf .inner[data-v-3ba36c9f]:hover{background:rgba(241,241,241,.1)}.vue-html2pdf .layout-container[data-v-3ba36c9f]{position:fixed;width:100vw;height:100vh;left:-100vw;top:0;z-index:-9999;background:rgba(95,95,95,.8);display:flex;justify-content:center;align-items:flex-start;overflow:auto}.vue-html2pdf .layout-container.show-layout[data-v-3ba36c9f]{left:0;z-index:9999}.vue-html2pdf .layout-container.unset-all[data-v-3ba36c9f]{all:unset;width:auto;height:auto}.vue-html2pdf .pdf-preview[data-v-3ba36c9f]{position:fixed;width:65%;min-width:600px;height:80vh;top:100px;z-index:9999999;left:50%;transform:translateX(-50%);border-radius:5px;box-shadow:0 0 10px #00000048}.vue-html2pdf .pdf-preview button[data-v-3ba36c9f]{position:absolute;top:-20px;left:-15px;width:35px;height:35px;background:#555;border:0;box-shadow:0 0 10px #00000048;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}.vue-html2pdf .pdf-preview iframe[data-v-3ba36c9f]{border:0}.vue-html2pdf .transition-anim-enter-active[data-v-3ba36c9f],.vue-html2pdf .transition-anim-leave-active[data-v-3ba36c9f]{transition:opacity .3s ease-in}.vue-html2pdf .transition-anim-enter[data-v-3ba36c9f],.vue-html2pdf .transition-anim-leave-to[data-v-3ba36c9f]{opacity:0}", map: undefined, media: undefined });
 
   };
   /* scoped */
-  var __vue_scope_id__ = "data-v-fc45c408";
+  var __vue_scope_id__ = "data-v-3ba36c9f";
   /* module identifier */
   var __vue_module_identifier__ = undefined;
   /* functional template */

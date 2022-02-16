@@ -21,7 +21,9 @@
         <button @click.self="closePreview()">
           &times;
         </button>
-
+        <div class="download-pdf" @click="savePdf">
+          <div class="inner"></div>
+        </div>
         <iframe
             :src="pdfFile"
             width="100%"
@@ -223,7 +225,23 @@ export default {
       this.$emit('hasPaginated')
       this.downloadPdf()
     },
-
+    async savePdf(event) {
+      event.stopPropagation();
+      const pdfContent = this.$refs.pdfContent
+      let options = this.setOptions()
+      const html2PdfSetup = html2pdf().set(options).from(pdfContent)
+      const filePDF = await html2PdfSetup.toPdf().get('pdf')
+      if (this.filename) {
+        filePDF.setProperties({
+          title: `${this.filename}.pdf`,
+          // subject: `${this.filename}`,
+          // author: 'owlee',
+          // keywords: 'pdf',
+          // creator: 'owlee'
+        });
+      }
+      filePDF.save(`${this.filename}.pdf`);
+    },
     async downloadPdf() {
       // Set Element and Html2pdf.js Options
       const pdfContent = this.$refs.pdfContent
@@ -306,6 +324,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.download-pdf {
+  cursor: pointer;
+  position: absolute;
+  top: 8px;
+  right: 92px;
+  width: 40px;
+  height: 40px;
+  .inner {
+    margin-top: 2px;
+    margin-left: 2px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    &:hover {
+      background: rgba(241, 241, 241, 0.1);
+    }
+  }
+}
+
 .vue-html2pdf {
   .layout-container {
     position: fixed;
