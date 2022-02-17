@@ -100,7 +100,8 @@ export default {
       hasAlreadyParsed: false,
       progress: 0,
       pdfWindow: null,
-      pdfFile: null
+      pdfFile: null,
+      filePDF: null,
     }
   },
 
@@ -226,21 +227,7 @@ export default {
       this.downloadPdf()
     },
     async savePdf(event) {
-      event.stopPropagation();
-      const pdfContent = this.$refs.pdfContent
-      let options = this.setOptions()
-      const html2PdfSetup = html2pdf().set(options).from(pdfContent)
-      const filePDF = await html2PdfSetup.toPdf().get('pdf')
-      if (this.filename) {
-        filePDF.setProperties({
-          title: `${this.filename}.pdf`,
-          // subject: `${this.filename}`,
-          // author: 'owlee',
-          // keywords: 'pdf',
-          // creator: 'owlee'
-        });
-      }
-      filePDF.save(`${this.filename}.pdf`);
+      this.filePDF.save(`${this.filename}.pdf`);
     },
     async downloadPdf() {
       // Set Element and Html2pdf.js Options
@@ -259,6 +246,7 @@ export default {
             title: `${this.filename}.pdf`,
           });
         }
+        this.filePDF = filePDF;
         this.pdfFile = filePDF.output('datauristring');
         pdfBlobUrl = filePDF.output('bloburl')
       }
