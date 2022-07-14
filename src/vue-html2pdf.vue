@@ -247,8 +247,9 @@ export default {
           });
         }
         this.filePDF = filePDF;
-        this.pdfFile = filePDF.output('datauristring');
-        pdfBlobUrl = filePDF.output('bloburl')
+        // this.pdfFile = filePDF.output('datauristring');
+        this.pdfFile = filePDF.output('bloburl');
+        pdfBlobUrl = filePDF.output('bloburl');
       }
 
       if (this.enableDownload) {
